@@ -11,11 +11,16 @@ const features = [
     "multiserver",
     "remotecontrol",
     "fullscreenchange",
+    "filedownload",
+    "remotevideo",
+    "displaymode",
+    "screensaver"
 ];
 
 const plugins = [
     'mpvVideoPlayer',
     'mpvAudioPlayer',
+    'jmpInputPlugin'
 ];
 
 function loadScript(src) {
@@ -103,8 +108,11 @@ async function createApi() {
 }
 
 window.NativeShell.AppHost = {
-    async init() {
-        window.api = await createApi();
+    init() {
+        window.apiPromise = createApi();
+        (async () => {
+            window.api = await window.apiPromise;
+        })();
     },
     getDefaultLayout() {
         return "desktop";
