@@ -56,6 +56,17 @@ class mpvAudioPlayer {
             self._currentTime = null;
             self._duration = undefined;
 
+            console.log(JSON.stringify(options,null,2));
+
+            const uri_reg = new RegExp('^(.*:)//([A-Za-z0-9\-\.]+)(:[0-9]+)?(.*)$', 'i');
+            // proto $1, host $2, port $3, the-rest $4
+            const localhost = new RegExp('^localhost$|^127(?:\.[0-9]+){0,2}\.[0-9]+$|^(?:0*\:)*?:?0*1$', 'i');
+            // https://stackoverflow.com/questions/8426171/what-regex-will-match-all-loopback-addresses
+            const uri = options.url.match(uri_reg);
+            if (options.Protocol.toLowerCase() != "file" && options.SupportsDirectPlay && localhost.test(uri[2])) {
+                options.url = new URL(new URL(options.url).pathname, ApiClient._serverAddress).toString();
+            }
+
             const player = window.api.player;
             if (!self._hasConnection) {
                 self._hasConnection = true;
